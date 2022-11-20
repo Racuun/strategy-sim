@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "lib": ["ES2015", "DOM", "ES5"],
+    },
+    "include": ["**/*.ts", "**/*.json"],
+    "exclude": ["node_modules", "src", "src/data"],
+    
+}

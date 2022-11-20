@@ -1,0 +1,6 @@
+{
+	"scripts": {
+		"dev": "tsc -p tsconfig.json && node index.js",
+		"build": "tsc -p tsconfig.json"
+	}
+}
