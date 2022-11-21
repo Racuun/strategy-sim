@@ -1,7 +1,7 @@
-import {default as _SPY} from './json/spy_eod_93-22.json'
+import {default as _SPY} from '../data/spy_eod_93-22.json'
 
 export enum Source{
-    SPY_EOD_1993_2022 = 'spy_eod_93-22.json',
+    SPY_EOD_1993_2022 = 1,
 }
 
 

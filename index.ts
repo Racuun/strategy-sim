@@ -1,21 +1,12 @@
-import Data from './src/data/index'
+import position from './src/position'
+import Data from './src/data'
 import Simulator from './src/simulator'
 
 
-
-const simulator = new Simulator(10_000, Data.Source.SPY_EOD_1993_2022);
-
-simulator.tick.push(
-    ({Close, Buy}) => test(Close, Buy)
-)
-
-function test2(t:()=>any) {
-    t();
+const StrategySim = {
+    ...Data,
+    position: position,
+    Simulator: Simulator,
 }
 
-function test(Close:number, buy: ()=>any) {
-    if (Close > 400)
-        buy()
-}
-
-simulator.run();
+export default StrategySim;
