@@ -1,27 +1,6 @@
-import {Source} from "./data/index";
-import Data from "./data/index"
-
-class position {
-    index: number;
-
-    openPrice: number;
-    closePrice?: number = undefined;
-    percentage?: number = undefined;
-
-    closed: boolean = false;
-
-    constructor(_index:number, price:number) {
-        this.index = _index;
-        this.openPrice = price;
-    }
-
-    close(price:number) {
-        this.closePrice = price;
-        this.percentage = (this.closePrice/this.openPrice * 100)
-        this.closed = true;
-    }
-
-}
+import {Source} from "./data";
+import Data from "./data";
+import position from './position';
 
 interface tickData {
     Open: number, 
@@ -45,20 +24,21 @@ class Simulator {
 
 
     public balance: number;
+    private startingBalance: number;
 
     public positions: position[] = [];
     public positionsCount: number = 0;
 
-    public data;
+    private data;
     private currTick: number =0;
     private error: boolean = false;
 
     constructor(startingBalance: number, source: Source) {
-        this.balance = startingBalance;
+        this.balance = this.startingBalance = startingBalance;
         this.data = Data.getData(source);
     }
 
-    buy() : number {
+    private buy() : number {
         let price : number = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close))/2;
 
         if (this.balance - price < 0) {
@@ -78,10 +58,10 @@ class Simulator {
         return idx;
     }
 
-    sell(index: number) {
+    private sell(index: number) {
         let price = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close))/2;
 
-        if (!this.positions[index].closed) {
+        if (this.positions[index].isClosed) {
             this.elog("Trying to close position that was already closed", 2)
             return;
         }
@@ -89,16 +69,24 @@ class Simulator {
         this.positions[index].close(price);
 
         this.balance += price;
+
+        this.log("Position " + index + " was closed at price: " + price + ", current balance: " + this.balance)
     }
 
     
 
-    tick: ((args:tickData) => any)[] = [];
+    private logic: ((args:tickData) => any)[] = [];
+    public provideLogic(...logic: ((args:tickData) => any)[]) {
+        logic = [];
+        for (let i=0; i<logic.length; i++)
+            this.logic.push(logic[i]);
+    }
+
 
     private onTick(tick: number) {
-        for (let j=0; j<this.tick.length; j++) {
+        for (let j=0; j<this.logic.length; j++) {
 
-            this.tick[j]({
+            this.logic[j]({
                 Open:parseFloat(this.data[tick].Open), 
                 Close:parseFloat(this.data[tick].Close), 
                 Volume:parseFloat(this.data[tick].Volume), 
@@ -109,8 +97,21 @@ class Simulator {
 
         }
     }
+    private onFinish() {
+        let fBalance = this.balance;
+        for (let i=0; i<this.positions.length; i++) {
+            if (!this.positions[i].isClosed)
+                fBalance +=this.data[this.currTick].Close
+        }
 
-    run() {
+        console.log("Simulation finished!" +
+         "\n -> balance: " + fBalance +
+         "\n -> change%: " + (((fBalance/this.startingBalance)*100)-100) + "%" +
+         "\n -> positions opened: " + this.positionsCount
+         )
+    }
+
+    public run() {
         if (this.data == undefined) {
             this.elog("Data undefined", 0);
             return;
@@ -124,6 +125,8 @@ class Simulator {
 
             this.onTick(i);
         }
+
+        this.onFinish();
     }
 
 }
