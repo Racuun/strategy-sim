@@ -77,7 +77,6 @@ class Simulator {
 
     private logic: ((args:tickData) => any)[] = [];
     public provideLogic(...logic: ((args:tickData) => any)[]) {
-        logic = [];
         for (let i=0; i<logic.length; i++)
             this.logic.push(logic[i]);
     }
