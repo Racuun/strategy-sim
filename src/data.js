@@ -41,12 +41,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 exports.methods = exports.Source = void 0;
 var node_fetch_1 = __importDefault(require("node-fetch"));
-//import {default as _SPY_EOD} from '../data/spy_eod_93-16.11.2022.json'
-//import {default as _NASDAQ_EOD} from '../data/nasdaq_eod_71-22.11.2022.json'
-//import {default as _MSFT_EOD} from '../data/msft_eod_86-22.11.2022.json'
-//import {default as _SPY_M1} from '../data/spy.usd_1min_bid_22.11.2021-19.11.2022.json'
-//import {default as _SPY_M5} from '../data/SPY.USUSD_Candlestick_5_M_BID_25.11.2019-22.11.2022.json'
-//import {default as _SPY_M15} from '../data/SPY.USUSD_Candlestick_15_M_BID_25.11.2019-22.11.2022.json'
 var Source;
 (function (Source) {
     /** SPY - US500S&P index
@@ -54,40 +48,40 @@ var Source;
      *  End of day data
      *  (1993-2022)
      *  ~ 7k ticks */
-    Source["SPY_EOD"] = "spy_eod_93-16.11.2022.json";
+    Source["SPY_EOD"] = "spy/eod/c.json";
     /** NASDAQ - NASDAQ index
      *  USD
      *  End of day data
      *  (1971-2022)
      * */
-    Source["NASDAQ_EOD"] = "nasdaq_eod_71-22.11.2022.json";
+    Source["NASDAQ_EOD"] = "nasdaq/eod/c.json";
     /** MSFT - Microsoft
      *  USD
      *  End of day data
      *  (1986 - 2022)
      */
-    Source["MSFT_EOD"] = "msft_eod_86-22.11.2022.json";
+    Source["MSFT_EOD"] = "msft/eod/c.json";
     /** SPY - US500S&P index
      *  USD
      *  1 minute candles
      *  (2021-2022)
      *  ~400k ticks
      */
-    Source["SPY_M1"] = "spy.usd_1min_bid_22.11.2021-19.11.2022.json";
+    Source["SPY_M1"] = "spy/1m/c.json";
     /** SPY- US500S&P index
      *  USD
      *  5 minutes candles
      *  (2019-2022)
      *  ~300k ticks
     */
-    Source[Source["SPY_M5"] = 5] = "SPY_M5";
+    Source["SPY_M5"] = "spy/5m/c.json";
     /** SPY - US500S&P index
      *  USD
      *  15 minutes candles
      *  (2019-2022)
      *  ~100k ticks
      */
-    Source[Source["SPY_M15"] = 6] = "SPY_M15";
+    Source["SPY_M15"] = "spy/15m/c.json";
 })(Source = exports.Source || (exports.Source = {}));
 function request(type) {
     return __awaiter(this, void 0, void 0, function () {
