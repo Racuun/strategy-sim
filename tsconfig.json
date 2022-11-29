@@ -3,9 +3,9 @@
         "moduleResolution": "node",
         "esModuleInterop": true,
         "resolveJsonModule": true,
-        "lib": ["ES2015", "DOM", "ES5"],
+        "lib": ["ES2015", "DOM", "ES5", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020", "ES2021", "ES2022"],
     },
-    "include": ["**/*.ts", "**/*.json"],
-    "exclude": ["node_modules", "src", "src/data"],
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules"],
     
 }
