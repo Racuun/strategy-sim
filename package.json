@@ -2,5 +2,8 @@
 	"scripts": {
 		"dev": "tsc -p tsconfig.json && node index.js",
 		"build": "tsc -p tsconfig.json"
+	},
+	"dependencies": {
+		"node-fetch": "^3.3.0"
 	}
 }
