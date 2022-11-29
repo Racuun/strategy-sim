@@ -1,9 +1,32 @@
 {
-	"scripts": {
-		"dev": "tsc -p tsconfig.json && node index.js",
-		"build": "tsc -p tsconfig.json"
-	},
-	"dependencies": {
-		"node-fetch": "^3.3.0"
-	}
+  "scripts": {
+    "test": "tsc -p tsconfig.json && node test/test",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "node-fetch": "2"
+  },
+  "name": "strategy-sim",
+  "description": "Stock market simulator based on historical data.",
+  "version": "0.1.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Racuun/strategy-sim.git"
+  },
+  "keywords": [
+    "market",
+    "stock",
+	"strategy"
+  ],
+  "author": "Racuun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Racuun/strategy-sim/issues"
+  },
+  "homepage": "https://github.com/Racuun/strategy-sim#readme"
 }
