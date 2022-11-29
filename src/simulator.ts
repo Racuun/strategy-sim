@@ -1,5 +1,5 @@
 import {Source} from "./data";
-import Data from "./data";
+import {methods as Data} from "./data";
 import position from './position';
 
 interface tickData {
@@ -33,9 +33,13 @@ class Simulator {
     private currTick: number =0;
     private error: boolean = false;
 
-    constructor(startingBalance: number, source: Source) {
+    private constructor(startingBalance: number, data) {
         this.balance = this.startingBalance = startingBalance;
-        this.data = Data.getData(source);
+        this.data = data;
+    }
+    public static async build(startingBalance: number, type:Source): Promise<Simulator> {
+        const data = await Data.getData(type);
+        return new Simulator(startingBalance, data);
     }
 
     private buy() : number {
@@ -110,7 +114,9 @@ class Simulator {
          )
     }
 
-    public run() {
+    public async run() {
+        
+
         if (this.data == undefined) {
             this.elog("Data undefined", 0);
             return;
