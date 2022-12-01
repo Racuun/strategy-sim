@@ -60,7 +60,7 @@ Simulator.run()
 ```
 
 
-## Buing and Selling
+## Positions
 ### Buy
 Implement `buy()` funcion:
 ```typescript
@@ -74,6 +74,15 @@ Not checking current balance and using `buy()` may lead to this error:
 ```bash
 [2022-12-01T01:02:30.169] [ERROR] simulator - [2979]: trying to buy without money //ERROR
 ```
+`buy()` can also return index of the opened position
+```typescript
+function testFunction(buy:()=>number) {
+  console.log(buy());
+}
+
+Simulator.provideLogic(({Buy}) => testFunction(Buy))
+```
+
 ### Sell
 Implementing `sell()` function:
 ```typescript
@@ -91,33 +100,46 @@ Passing the wrong index may return an error:
 ```bash
 [2022-12-01T01:24:11.865] [ERROR] simulator - [0]: Trying to close position that doesn't exist! //ERROR
 ```
+## Logic
+### Providing logic
+Every single alghorim you want to use is called `logic`. `Logic` should be a function, that would be able to run on each tick. As to date, there is no time limit - your `logic` can work as long as you want (It's recommended that functions' summary run time fits in the chosen interval).
 
-## Complex logic
-If you need to optain more information from the current candle, you can do it like that:
+Providing the logic:
 ```typescript
-function testFunction(Balance:number, Close:number, buy:()=>any) {
+function test() {
+  console.log("This works on each tick!")
+}
+
+Simulator.provideLogic(() => test())
+```
+### Complex logic
+If you need, simulator can provide sertain data. You can use it like that:
+```typescript
+function test(Balance:number, Close:number, buy:()=>any) {
   if (Balance - Close > 0)
     buy()
 }
 
-Simulator.provideLogic(({Balance, Close, Buy}) => testFunction(Balance, Close, Buy))
+Simulator.provideLogic(({Balance, Close, Buy}) => test(Balance, Close, Buy))
 ```
-You can request this basic information:
+Function `test()` will recieve current account balance, current tick's close price, and it can use `buy()` function. The data will be passed on each tick.
+
+You can obtain this basic informations:
 - Open price
 - Close price
 - Current account balance
 
-Also you can get functions:
+Also you can use functions:
 - `Sell(index)`
 - `Buy()`
 
-## Multiply logics
+### Multiple functions
 You can privde multiple functions for one simulation:
 ```typescript
 Simulator.provideLogic(({Balance, Close}) => test1(Balance, Close), () => test2())
 ```
 They will all work on the same data and make operations on the same account. That gives you an option to test your whole strategy at once.
-
+#### Alghoritms will not run simultaneously. You need to provide `logic` in the correct orrder.
 
 ## Data coverage
 All our data can be found on the internet for freel.
