@@ -46,7 +46,6 @@ export enum Source{
 async function request(type: Source) {
     const response = await fetch('https://racuun.github.io/strategy-sim-database/data/'+ type);
     const data = await response.json()
-    console.log(data)
     return data;
 }
 
