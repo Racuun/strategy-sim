@@ -10,7 +10,7 @@
   "name": "strategy-sim",
   "description": "Stock market simulator based on historical data.",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "./build/index.js",
   "directories": {
     "test": "test",
     "lib": "src"
@@ -31,5 +31,10 @@
   "bugs": {
     "url": "https://github.com/Racuun/strategy-sim/issues"
   },
-  "homepage": "https://github.com/Racuun/strategy-sim#readme"
+  "homepage": "https://github.com/Racuun/strategy-sim#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.10",
+    "esbuild": "^0.15.16",
+    "typescript": "^4.9.3"
+  }
 }

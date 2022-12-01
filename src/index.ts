@@ -1,11 +1,6 @@
-import position from "./position";
-import Data from "./data";
-import Simulator from "./simulator";
+export * from "@/data";
+import Simulator from "@/simulator";
+import position from "@/position";
 
-const StrategySim = {
-  ...Data,
-  position: position,
-  Simulator: Simulator,
-};
-
-export default StrategySim;
+export { position };
+export default Simulator;

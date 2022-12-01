@@ -1,7 +1,7 @@
-import StrategySim from "../src/index";
+import StrategySim, { Source } from "@";
 
 async function main(): Promise<void> {
-  const Simulator = await StrategySim.Simulator.build(10000, StrategySim.Source.MSFT_EOD);
+  const Simulator = await StrategySim.build(Source.MSFT_EOD);
 
   let i = 0;
   function testFunction(Close: number, Balance: number, Buy: () => any, Sell: (index: number) => any) {
