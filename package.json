@@ -1,19 +1,12 @@
 {
-  "scripts": {
-    "test": "tsc -p tsconfig.json && node build/test/test",
-    "build": "tsc -p tsconfig.json"
-  },
-  "dependencies": {
-    "log4js": "^6.7.1",
-    "node-fetch": "2"
-  },
   "name": "strategy-sim",
-  "description": "Stock market simulator based on historical data.",
   "version": "1.0.0",
-  "main": "index.ts",
-  "directories": {
-    "test": "test",
-    "lib": "src"
+  "description": "Stock market simulator based on historical data.",
+  "exports": {
+    ".": {
+      "require": "./build/bundle.cjs",
+      "import": "./build/bundle.mjs"
+    }
   },
   "repository": {
     "type": "git",
@@ -31,5 +24,22 @@
   "bugs": {
     "url": "https://github.com/Racuun/strategy-sim/issues"
   },
-  "homepage": "https://github.com/Racuun/strategy-sim#readme"
+  "homepage": "https://github.com/Racuun/strategy-sim#readme",
+  "scripts": {
+    "test": "node ./esbuild.config.test.js && node build/test.cjs",
+    "build": "rm -r ./build && node ./esbuild.config.js && tsc -p tsconfig.build.json"
+  },
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "log4js": "^6.7.1",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.10",
+    "esbuild": "^0.15.16",
+    "typescript": "^4.9.3"
+  },
+  "files": [
+    "build/*"
+  ]
 }
