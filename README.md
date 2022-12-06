@@ -61,41 +61,100 @@ Simulator.run()
 
 
 ## Positions
-### Buy
-Implement `buy()` funcion:
+### Open
+To open a single position:
 ```typescript
-function testFunction(buy:()=>any) {
-  buy()
+function testFunction(openPosition:()=>any) {
+
+  openPosition()
 }
 
-Simulator.provideLogic(({Buy}) => testFunction(Buy))
+Simulator.provideLogic(({openPosition}) => testFunction(openPosition))
 ```
-Not checking current balance and using `buy()` may lead to this error:
+Not checking current balance and using `openPosition()` may lead to this error:
 ```bash
-[2022-12-01T01:02:30.169] [ERROR] simulator - [2979]: trying to buy without money //ERROR
-```
-`buy()` can also return index of the opened position
-```typescript
-function testFunction(buy:()=>number) {
-  console.log(buy());
-}
-
-Simulator.provideLogic(({Buy}) => testFunction(Buy))
+[2022-12-01T01:02:30.169] [ERROR] simulator - [2979]: trying to openPosition without money //ERROR
 ```
 
-### Sell
-Implementing `sell()` function:
+`openPosition()` can also return index of the opened position
+
 ```typescript
-function testFunction(sell:(index:number)=>any) {
-  sell(0)
+function testFunction(openPosition:()=>number) {
+
+  console.log(openPosition());
 }
 
-Simulator.provideLogic(({Sell}) => testFunction(Sell))
+Simulator.provideLogic(({openPosition}) => testFunction(openPosition))
+```
+
+#### Open multiple positions
+If you want to open multiple positions, just pass the number:
+```typescript
+function testFunction(openPosition:(count:number)=>any) {
+
+  openPosition(2)
+
+  // this will retrun error:
+  openPosition()
+}
+
+Simulator.provideLogic(({openPosition}) => testFunction(openPosition))
+```
+
+For dynamic use:
+```typescript
+function testFunction(openPosition:(count:number)=>any) {
+
+  openPosition(2)
+
+  // now both will work
+  openPosition()
+}
+
+Simulator.provideLogic(({openPosition}) => testFunction(openPosition))
+```
+
+### Close
+Implementing `closePosition()` function:
+```typescript
+function testFunction(closePosition:(...index: number[])=>any) {
+
+  // this will close position with index '0'
+  closePosition(0)
+}
+
+Simulator.provideLogic(({closePosition}) => testFunction(closePosition))
 ```
 You can only close position if it wasn't already closed:
 ```bash
 [2022-12-01T01:08:55.511] [ERROR] simulator - [1]: Trying to close position that was already closed //ERROR
 ```
+
+#### Multiple indicies
+
+You can not pass any indicies. This will lead to closing first open position in your account:
+```typescript
+function testFunction(closePosition:()=>any) {
+
+  // the first open position will be closed
+  closePosition()
+}
+
+Simulator.provideLogic(({closePosition}) => testFunction(closePosition))
+```
+
+We also provide an option for closing multiple positions at once:
+```typescript
+function testFunction(closePosition:(...index: number[])=>any) {
+
+  // this will close position 0 and position 1
+  closePosition(0, 1)
+}
+
+Simulator.provideLogic(({closePosition}) => testFunction(closePosition))
+```
+
+
 Passing the wrong index may return an error:
 ```bash
 [2022-12-01T01:24:11.865] [ERROR] simulator - [0]: Trying to close position that doesn't exist! //ERROR
@@ -115,14 +174,14 @@ Simulator.provideLogic(() => test())
 ### Complex logic
 If you need, simulator can provide sertain data. You can use it like that:
 ```typescript
-function test(Balance:number, Close:number, buy:()=>any) {
+function test(Balance:number, Close:number, openPosition:()=>any) {
   if (Balance - Close > 0)
-    buy()
+    openPosition()
 }
 
-Simulator.provideLogic(({Balance, Close, Buy}) => test(Balance, Close, Buy))
+Simulator.provideLogic(({Balance, Close, openPosition}) => test(Balance, Close, openPosition))
 ```
-Function `test()` will recieve current account balance, current tick's close price, and it can use `buy()` function. The data will be passed on each tick.
+Function `test()` will recieve current account balance, current tick's close price, and it can use `openPosition()` function. The data will be passed on each tick.
 
 You can obtain this basic informations:
 - Open price
@@ -130,8 +189,8 @@ You can obtain this basic informations:
 - Current account balance
 
 Also you can use functions:
-- `Sell(index)`
-- `Buy()`
+- `closePosition(...index: number[])`
+- `openPosition()`
 
 ### Multiple functions
 You can privde multiple functions for one simulation:

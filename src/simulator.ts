@@ -8,8 +8,22 @@ interface tickData {
   Close: number;
   Volume: number;
   Balance: number;
-  Buy: () => any;
-  Sell: (index: number) => any;
+  /**
+   * This function will allow you to open positions in the simualtor.
+   * If you need to open multiple positions, pass the number.
+   * 
+   * 
+   * @param count number of positions you want to buy. If empty only one position will be opened
+   * @returns first index of all positions opened
+   */
+  openPosition: (count?: number) => any;
+  /**
+   * Close all specified positions.
+   * Price will be set to an average of the current tick close and open.
+   * 
+   * @param index indexes of the positions you want to close. If not provided first open position will be closed.
+   */
+  closePosition: (...index: number[]) => any;
 }
 
 class Simulator {
@@ -66,50 +80,102 @@ class Simulator {
     );
   }
 
-  private buy(): number {
-    let price: number = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close)) / 2;
 
-    if (this.balance - price < 0) {
-      this.elog("trying to buy without money");
-      return;
+  /**
+   * 
+   */
+  private openPostion(count?: number): number {
+    if (count === undefined) {
+      count = 1;
     }
+    let x=0;
+    for (let i=0; i<count; i++) {
+      let price: number = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close)) / 2;
 
-    let temp: position = new position(this.positionsCount, price);
-    let idx = temp.index;
+      if (this.balance - price < 0) {
+        this.elog("trying to buy without money");
+        return;
+      }
 
-    this.positions.push(temp);
-    this.positionsCount++;
+      let temp: position = new position(this.positionsCount, price);
+      let idx = temp.index;
 
-    this.balance -= price;
+      this.positions.push(temp);
+      this.positionsCount++;
 
-    this.log("Position " + idx + " opened at price: " + price + ", currnet balance: " + this.balance);
-    return idx;
+      this.balance -= price;
+
+      this.log("Position " + idx + " opened at price: " + price + ", currnet balance: " + this.balance);
+
+      x = x < idx ? x : idx;
+    }
+    return x;
   }
 
-  private sell(index: number) {
-    if (index >= this.positions.length) {
-      this.elog("Trying to close position that doesn't exist!");
+  /**
+   * Close all specified positions.
+   * Price will be set to an average of the current tick close and open.
+   * 
+   * @param index indexes of the positions you want to close. If not provided first open position will be closed.
+   */
+  private closePosition(...index: number[]) { 
+    // index was not provided
+    if (index.length == 0) {
+      // iteratig in all positions
+      for (let i = 0; i < this.positions.length; i++) {
+        // checking if the position is open
+        if (!this.positions[i].isClosed) {
+          let price = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close)) / 2;
+
+          this.positions[i].close(price);
+          this.balance += price;
+
+          this.log("Position " + i + " was closed at price: " + price + ", current balance: " + this.balance);
+
+          return;
+        }
+      }
+
+      this.log("No position found");
       return;
     }
 
-    let price = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close)) / 2;
+    // handling all indexes
+    for (let i=0; i< index.length; i++) {
+      if (index[i] >= this.positions.length) {
+        this.elog("Trying to close position that doesn't exist!");
+        return;
+      }
 
-    if (this.positions[index].isClosed) {
-      this.elog("Trying to close position that was already closed");
-      return;
+      let price = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close)) / 2;
+
+      if (this.positions[index[i]].isClosed) {
+        this.elog("Trying to close position that was already closed");
+        return;
+      }
+
+      this.positions[index[i]].close(price);
+
+      this.balance += price;
+
+      this.log("Position " + index[i] + " was closed at price: " + price + ", current balance: " + this.balance);
     }
-
-    this.positions[index].close(price);
-
-    this.balance += price;
-
-    this.log("Position " + index + " was closed at price: " + price + ", current balance: " + this.balance);
   }
+
+
 
   private logic: ((args: tickData) => any)[] = [];
+  /**
+   * With this function you can implement your own strategy as function.
+   * 
+   * @param logic Your algorithms
+   */
   public provideLogic(...logic: ((args: tickData) => any)[]) {
     for (let i = 0; i < logic.length; i++) this.logic.push(logic[i]);
   }
+
+
+
 
   private onTick(tick: number) {
     for (let j = 0; j < this.logic.length; j++) {
@@ -118,8 +184,8 @@ class Simulator {
         Close: parseFloat(this.data[tick].Close),
         Volume: parseFloat(this.data[tick].Volume),
         Balance: this.balance,
-        Buy: () => this.buy(),
-        Sell: (index: number) => this.sell(index),
+        openPosition: (count?: number) => this.openPostion(count),
+        closePosition: (...index: number[]) => this.closePosition(...index),
       });
     }
   }
