@@ -96,7 +96,7 @@ class Simulator {
    * 
    * @param index indexes of the positions you want to close. If not provided first open position will be closed.
    */
-  private closePosition(...index: number[]) {
+  private closePosition(...index: number[]) { 
     // index was not provided
     if (index.length == 0) {
       // iteratig in all positions
