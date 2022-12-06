@@ -2,7 +2,7 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "target": "ESNext",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
     "useDefineForClassFields": true,
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
