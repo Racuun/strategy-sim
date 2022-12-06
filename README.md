@@ -83,19 +83,47 @@ function testFunction(buy:()=>number) {
 Simulator.provideLogic(({Buy}) => testFunction(Buy))
 ```
 
-### Sell
-Implementing `sell()` function:
+### Close
+Implementing `closePosition()` function:
 ```typescript
-function testFunction(sell:(index:number)=>any) {
+function testFunction(closePosition:(...index: number[])=>any) {
+
+  // this will close position with index '0'
   sell(0)
 }
 
-Simulator.provideLogic(({Sell}) => testFunction(Sell))
+Simulator.provideLogic(({closePosition}) => testFunction(closePosition))
 ```
 You can only close position if it wasn't already closed:
 ```bash
 [2022-12-01T01:08:55.511] [ERROR] simulator - [1]: Trying to close position that was already closed //ERROR
 ```
+
+#### Multiple indicies
+
+You can not pass any indicies. This will lead to closing first open position in your account:
+```typescript
+function testFunction(closePosition:()=>any) {
+
+  // the first open position will be closed
+  sell()
+}
+
+Simulator.provideLogic(({closePosition}) => testFunction(closePosition))
+```
+
+We also provide an option for closing multiple positions at once:
+```typescript
+function testFunction(closePosition:(...index: number[])=>any) {
+
+  // this will close position 0 and position 1
+  sell(0, 1)
+}
+
+Simulator.provideLogic(({closePosition}) => testFunction(closePosition))
+```
+
+
 Passing the wrong index may return an error:
 ```bash
 [2022-12-01T01:24:11.865] [ERROR] simulator - [0]: Trying to close position that doesn't exist! //ERROR
