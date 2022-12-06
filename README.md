@@ -103,7 +103,7 @@ Simulator.provideLogic(({openPosition}) => testFunction(openPosition))
 
 For dynamic use:
 ```typescript
-function testFunction(openPosition:(count:number)=>any) {
+function testFunction(openPosition:(count?:number)=>any) {
 
   openPosition(2)
 
