@@ -61,10 +61,11 @@ Simulator.run()
 
 
 ## Positions
-### openPosition
-Implement `openPosition()` funcion:
+### Open
+To open a single position:
 ```typescript
 function testFunction(openPosition:()=>any) {
+
   openPosition()
 }
 
@@ -74,10 +75,40 @@ Not checking current balance and using `openPosition()` may lead to this error:
 ```bash
 [2022-12-01T01:02:30.169] [ERROR] simulator - [2979]: trying to openPosition without money //ERROR
 ```
+
 `openPosition()` can also return index of the opened position
+
 ```typescript
 function testFunction(openPosition:()=>number) {
+
   console.log(openPosition());
+}
+
+Simulator.provideLogic(({openPosition}) => testFunction(openPosition))
+```
+
+#### Open multiple positions
+If you want to open multiple positions, just pass the number:
+```typescript
+function testFunction(openPosition:(count:number)=>any) {
+
+  openPosition(2)
+
+  // this will retrun error:
+  openPosition()
+}
+
+Simulator.provideLogic(({openPosition}) => testFunction(openPosition))
+```
+
+For dynamic use:
+```typescript
+function testFunction(openPosition:(count:number)=>any) {
+
+  openPosition(2)
+
+  // now both will work
+  openPosition()
 }
 
 Simulator.provideLogic(({openPosition}) => testFunction(openPosition))

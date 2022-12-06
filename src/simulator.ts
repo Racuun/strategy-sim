@@ -8,7 +8,21 @@ interface tickData {
   Close: number;
   Volume: number;
   Balance: number;
-  openPosition: () => any;
+  /**
+   * This function will allow you to open positions in the simualtor.
+   * If you need to open multiple positions, pass the number.
+   * 
+   * 
+   * @param count number of positions you want to buy. If empty only one position will be opened
+   * @returns first index of all positions opened
+   */
+  openPosition: (count?: number) => any;
+  /**
+   * Close all specified positions.
+   * Price will be set to an average of the current tick close and open.
+   * 
+   * @param index indexes of the positions you want to close. If not provided first open position will be closed.
+   */
   closePosition: (...index: number[]) => any;
 }
 
@@ -70,24 +84,32 @@ class Simulator {
   /**
    * 
    */
-  private openPostion(): number {
-    let price: number = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close)) / 2;
-
-    if (this.balance - price < 0) {
-      this.elog("trying to buy without money");
-      return;
+  private openPostion(count?: number): number {
+    if (count === undefined) {
+      count = 1;
     }
+    let x=0;
+    for (let i=0; i<count; i++) {
+      let price: number = (parseFloat(this.data[this.currTick].Open) + parseFloat(this.data[this.currTick].Close)) / 2;
 
-    let temp: position = new position(this.positionsCount, price);
-    let idx = temp.index;
+      if (this.balance - price < 0) {
+        this.elog("trying to buy without money");
+        return;
+      }
 
-    this.positions.push(temp);
-    this.positionsCount++;
+      let temp: position = new position(this.positionsCount, price);
+      let idx = temp.index;
 
-    this.balance -= price;
+      this.positions.push(temp);
+      this.positionsCount++;
 
-    this.log("Position " + idx + " opened at price: " + price + ", currnet balance: " + this.balance);
-    return idx;
+      this.balance -= price;
+
+      this.log("Position " + idx + " opened at price: " + price + ", currnet balance: " + this.balance);
+
+      x = x < idx ? x : idx;
+    }
+    return x;
   }
 
   /**
@@ -162,7 +184,7 @@ class Simulator {
         Close: parseFloat(this.data[tick].Close),
         Volume: parseFloat(this.data[tick].Volume),
         Balance: this.balance,
-        openPosition: () => this.openPostion(),
+        openPosition: (count?: number) => this.openPostion(count),
         closePosition: (...index: number[]) => this.closePosition(...index),
       });
     }
